@@ -1,0 +1,33 @@
+name: Deploy API (service)
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+    paths:
+      - "services/api/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Use Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+          cache-dependency-path: services/api/yarn.lock
+      - name: Install dependencies
+        run: cd services/api && yarn
+      - name: Deploy
+        uses: serverless/github-action@v3.1
+        with:
+          args: -c "cd services/api && sls deploy --stage ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}"
+          entrypoint: /bin/sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          CI: true
