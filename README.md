@@ -46,3 +46,12 @@ To run the application locally, you need to have [Node.js](https://nodejs.org/en
 1. Clone the repository
 2. Install dependencies with `npm install`
 3. Run the application with `npm run dev`
+
+### Testing
+
+To run the tests locally, you need to have [Node.js](https://nodejs.org/en/) installed.
+
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Run the tests with `npm run test`
+
