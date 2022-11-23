@@ -1,7 +1,7 @@
-# Credity [![NahNova]
+# Credity
 
-<img src="https://ai.github.io/size-limit/logo.svg" align="right"
-     alt="Size Limit logo by Anton Lovchikov" width="120" height="178">
+<img src="./logo.png" align="right"
+     alt="Credity logo by Noa Heutz" width="120" height="178">
 
 Credity is a simple and easy to use web application that allows you to
 create and manage events and their participants. It is built with
