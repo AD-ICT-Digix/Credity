@@ -16,4 +16,15 @@ create and manage events and their participants. It is built with
 We'll be using a GSI to index on other columns, in contrast to SQL DDB does not support joins.
 
 ### Api
-[API-Spec](https://nahnova.github.io/Credity/)
+[API-SPEC](https://nahnova.github.io/Credity/)
+
+### Deployment
+The application is deployed on [AWS](https://aws.amazon.com/).
+
+### Development
+To run the application locally, you need to have [Node.js](https://nodejs.org/en/) installed.
+
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Run the application with `npm run dev`
+
