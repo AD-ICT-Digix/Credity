@@ -32,6 +32,7 @@ where python is used as the main programming language. The database is [dynamodb
 We'll be using a GSI to index on other columns, in contrast to SQL DDB does not support joins.
 
 ### Api
+<<<<<<< HEAD
 
 [API-SPEC](https://nahnova.github.io/Credity/)
 
@@ -41,12 +42,21 @@ The application is deployed on [AWS](https://aws.amazon.com/).
 
 ### Development
 
+=======
+[API-SPEC](https://nahnova.github.io/Credity/)
+
+### Deployment
+The application is deployed on [AWS](https://aws.amazon.com/).
+
+### Development
+>>>>>>> e7c3fc473ca884f17ecd938eba7fc7d127d01bbd
 To run the application locally, you need to have [Node.js](https://nodejs.org/en/) installed.
 
 1. Clone the repository
 2. Install dependencies with `npm install`
 3. Run the application with `npm run dev`
 
+<<<<<<< HEAD
 ### Testing
 
 To run the tests locally, you need to have [Node.js](https://nodejs.org/en/) installed.
@@ -55,3 +65,5 @@ To run the tests locally, you need to have [Node.js](https://nodejs.org/en/) ins
 2. Install dependencies with `npm install`
 3. Run the tests with `npm run test`
 
+=======
+>>>>>>> e7c3fc473ca884f17ecd938eba7fc7d127d01bbd
