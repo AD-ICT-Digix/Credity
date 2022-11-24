@@ -1,0 +1,18 @@
+Resources:
+  RecordSetGroupShared:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: ${self:custom.domainHostedZoneId}
+      RecordSets:
+        - Name: ${self:custom.domainName}
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2 # Always the same for every CloudFront alias
+            DNSName: !GetAtt CloudFrontDistribution.DomainName
+            EvaluateTargetHealth: false
+        - Name: ${self:custom.domainName}
+          Type: AAAA
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2 # Always the same for every CloudFront alias
+            DNSName: !GetAtt CloudFrontDistribution.DomainName
+            EvaluateTargetHealth: false

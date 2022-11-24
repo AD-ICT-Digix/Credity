@@ -1,0 +1,48 @@
+service: web-dashboard
+
+plugins:
+  - serverless-s3-sync
+  - serverless-prune-plugin
+
+custom:
+  stage: ${opt:stage, 'developement'}
+  region: ${opt:region, 'eu-west-1'}
+  domainCertificateArn: arn:aws:acm:us-east-1:858928813840:certificate/9128d5a1-4363-4665-a5fb-18585f63962c
+  bucketName: credity-${self:service}-${self:custom.stage}
+  baseDomain: credity.nahnova.tech
+  domain:
+    production: ${self:custom.baseDomain}
+    staging: ${self:custom.stage}.${self:custom.baseDomain}
+  domainName: ${self:custom.domain.${self:custom.stage}, self:custom.domain.default}
+  domainHostedZoneId: Z07926121GAGHNXUBE0M6
+
+  prune:
+    automatic: true
+    number: 10
+
+  s3Sync:
+    - bucketName: ${self:custom.bucketName}
+      localDir: build/
+      acl: public-read
+      followSymlinks: true
+      defaultContentType: text/html
+      params:
+        - '**/*.html':
+            CacheControl: 'public, max-age=0, must-revalidate'
+        - "*.js":
+            CacheControl: 'public, max-age=31536000'
+
+# Provider config
+provider:
+  name: aws
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+
+  environment:
+    REACT_APP_STAGE: ${self:custom.stage}
+
+# CloudFormation resources
+resources:
+  - ${file(./serverless/CloudFrontDistribution/CloudFrontDistribution.yml)}
+  - ${file(./serverless/RecordSetGroup/RecordSetGroup.yml)}
+  - ${file(./serverless/WebBucket/WebBucket.yml)}

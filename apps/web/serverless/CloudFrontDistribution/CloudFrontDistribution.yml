@@ -1,0 +1,32 @@
+Resources:
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: ${self:custom.stage}
+        Aliases:
+          - ${self:custom.domainName}
+        ViewerCertificate:
+          AcmCertificateArn: ${self:custom.domainCertificateArn}
+          MinimumProtocolVersion: TLSv1.1_2016
+          SslSupportMethod: sni-only
+        DefaultCacheBehavior:
+          TargetOriginId: WebBucket
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          ForwardedValues:
+            QueryString: true
+            Cookies:
+              Forward: none
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+        Enabled: true
+        Origins:
+          - Id: WebBucket
+            DomainName: ${self:custom.bucketName}.s3-website-${self:provider.region}.amazonaws.com
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: http-only
