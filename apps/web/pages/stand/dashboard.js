@@ -8,14 +8,14 @@ export default function StandDashboard() {
   return (
     <main className="">
       <Header setIsOpen={setIsOpen} />
-      <div className="flex flex-col items-center justify-center w-full h-screen">
+      <div className="flex flex-col w-full h-screen">
         <h1 className="text-6xl font-bold text-center text-white">
-          Welkom bij de{" "}
+          Welcome to{" "}
           <span className="text-indigo-500">Credity</span>
         </h1>
         <h2 className="text-2xl font-bold text-center text-white">
-          De tool om data te verzamelen op de beurs
-        </h2>
+            Stand Dashboard
+          </h2>
       </div>
       <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
         <Card />
