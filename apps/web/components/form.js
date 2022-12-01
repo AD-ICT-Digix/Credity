@@ -1,8 +1,6 @@
 import React from "react";
-import "../styles/globals.css";
-import "@material-tailwind/react/tailwind.css";
 
-export const Form = () = (
+export const Form = () => (
     <div className="min-w-3xl flex-auto m-0">
       <form>
         <div className="relative z-0 mb-3 w-full group">
