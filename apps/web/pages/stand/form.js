@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Form } from "../../components";
+import { Header, Form } from "../../components";
 
 export default function StandForm() {
   return (
