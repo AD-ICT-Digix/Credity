@@ -1,0 +1,75 @@
+service: credity-api
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-domain-manager
+  
+custom:
+  stage: ${opt:stage, 'development'}
+  region: ${opt:region, 'eu-west-1'}
+  baseDomain: credity.nahnova.tech
+  domainCertificateArn: arn:aws:acm:us-east-1:358353621870:certificate/733416d7-c100-4a85-9727-8fd0ec7e75e9
+  tableName: ${self:service}-${self:custom.stage}
+  domain:
+    production: api.${self:custom.baseDomain}
+    default: api-${self:custom.stage}.${self:custom.baseDomain}
+  customDomain:
+    domainName: ${self:custom.domain.${self:custom.stage}, self:custom.domain.default}
+    stage: ${self:custom.stage}
+    certificateName: ${self:custom.baseDomain}
+    createRoute53Record: true
+    endpointType: regional
+    apiType: http
+    autoDomain: true
+  prune:
+    automatic: true
+    number: 20
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  region: ${self:custom.region}
+  stage: ${self:custom.stage}
+  deploymentMethod: direct
+  runtime: python3.8
+  timeout: 30
+  environment:
+    STAGE: ${self:custom.stage}
+    TABLE_NAME: ${self:custom.tableName}
+    REGION: ${self:custom.region}
+    COGNITO_USER_POOL_ID: ${cf:auth-${self:custom.stage}.cognitoUserPool}
+  httpApi:
+    payload: "2.0"
+    cors: true
+    authorizers:
+      WebAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Join:
+            - ""
+            - - "https://cognito-idp."
+              - "${opt:region, self:provider.region}"
+              - ".amazonaws.com/"
+              - ${cf:credity-auth-${self:custom.stage}.cognitoUserPool}
+        audience: ${cf:credity-auth-${self:custom.stage}.congitoUserPoolClient}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource:
+            - "*"
+        - Effect: Allow
+          Action:
+            - cognito-idp:*
+          Resource:
+            - "*"
+
+functions:
+  - ${file(./src/functions/status/function.yml)}
+
+resources:
+  - ${file(./src/infrastructure/database/table.yml)}
