@@ -26,7 +26,7 @@ export const Form = () => {
   useEffect(() => canBeSubmitted());
 
   return (
-  <div className="min-w-3xl flex-auto m-0">
+  <div className="min-w-3xl flex-auto m-0 border-4 border-indigo-500 p-2 rounded-lg">
     <form>
       <div className="relative z-0 mb-3 w-full group">
         <input
@@ -145,7 +145,7 @@ export const Form = () => {
           type="submit"
           id="submitButton"
 
-          className="disabled:opacity-25 text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+          className="disabled:opacity-25 text-white bg-gradient-to-r from-indigo-400 to-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
         >
           Submit
         </button>

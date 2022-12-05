@@ -6,3 +6,6 @@ export { Layout } from './Layout'
 export { LineChart } from './LineChart';
 export { Loader } from './Loader'
 export { Navigator } from './Navigator'
+export { StatCard } from './StatCard';
+export { Table } from './Table';
+export { TableDropdown } from './TableDropdown';
