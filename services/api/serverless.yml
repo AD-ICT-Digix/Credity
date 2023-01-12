@@ -3,12 +3,13 @@ service: credity-api
 plugins:
   - serverless-prune-plugin
   - serverless-domain-manager
-  
+  - serverless-python-requirements
+
 custom:
   stage: ${opt:stage, 'development'}
   region: ${opt:region, 'eu-west-1'}
   baseDomain: credity.nahnova.tech
-  domainCertificateArn: arn:aws:acm:us-east-1:358353621870:certificate/733416d7-c100-4a85-9727-8fd0ec7e75e9
+  domainCertificateArn: arn:aws:acm:us-east-1:858928813840:certificate/ee37e49d-35d1-42c3-8611-2bf72f1bf07b
   tableName: ${self:service}-${self:custom.stage}
   domain:
     production: api.${self:custom.baseDomain}
@@ -18,7 +19,7 @@ custom:
     stage: ${self:custom.stage}
     certificateName: ${self:custom.baseDomain}
     createRoute53Record: true
-    endpointType: regional
+    endpointType: REGIONAL
     apiType: http
     autoDomain: true
   prune:
@@ -33,13 +34,13 @@ provider:
   region: ${self:custom.region}
   stage: ${self:custom.stage}
   deploymentMethod: direct
-  runtime: python3.8
+  runtime: python3.9
   timeout: 30
   environment:
     STAGE: ${self:custom.stage}
     TABLE_NAME: ${self:custom.tableName}
     REGION: ${self:custom.region}
-    COGNITO_USER_POOL_ID: ${cf:auth-${self:custom.stage}.cognitoUserPool}
+    COGNITO_USER_POOL_ID: ${cf:credity-auth-${self:custom.stage}.cognitoUserPool}
   httpApi:
     payload: "2.0"
     cors: true
@@ -72,4 +73,4 @@ functions:
   - ${file(./src/functions/status/function.yml)}
 
 resources:
-  - ${file(./src/infrastructure/database/table.yml)}
+  - ${file(./src/infrastructure/database.yml)}
