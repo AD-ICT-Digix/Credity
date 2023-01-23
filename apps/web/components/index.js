@@ -6,3 +6,6 @@ export { Layout } from './Layout'
 export { LineChart } from './LineChart';
 export { Loader } from './Loader'
 export { Navigator } from './Navigator'
+export { Login } from './Login'
+export { Register } from './Register'
+export { ForgotPassword } from './ForgotPass'
