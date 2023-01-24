@@ -1,17 +1,31 @@
 import React from "react";
+import { API, Auth } from "aws-amplify";
+import "@aws-amplify/ui-react/styles.css";
+import { withAuthenticator } from "@aws-amplify/ui-react";
 
-export default function Home() {
-  const [isOpen, setIsOpen] = React.useState(false);
+Auth.configure({
+  identityPoolId: "eu-west-1:7d8d1ae9-7e22-4d8e-a40e-12133d8f4db0",
+  region: "eu-west-1",
+  userPoolId: "eu-west-1_lPwBdbSuG",
+  userPoolWebClientId: "4c6s6lo0sb50qmug1os8c61s1t",
+});
 
+API.configure({
+  endpoints: [
+    {
+      name: "APIGateway",
+      endpoint: "https://api.credity.nahnova.tech",
+    },
+  ],
+});
+
+function Home({signOut,user}){
   return (
-      <div className="flex flex-col w-full h-screen">
-        <h1 className="text-6xl font-bold text-center text-white">
-          Welcome to{" "}
-          <span className="text-indigo-500">Credity</span>
-        </h1>
-        <h2 className="text-2xl font-bold text-center text-white">
-          The tool for your event
-        </h2>
-      </div>
+    <>
+      <h1>hello {user.username}</h1>
+      <button onClick={signOut}>Sign Out</button>
+    </>
   );
 }
+
+export default withAuthenticator(Home)

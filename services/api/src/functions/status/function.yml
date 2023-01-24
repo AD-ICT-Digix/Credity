@@ -1,0 +1,6 @@
+status:
+  handler: src/functions/status/handler.main
+  events:
+    - httpApi:
+        path: /status
+        method: get

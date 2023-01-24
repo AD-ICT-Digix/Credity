@@ -1,0 +1,9 @@
+Outputs:
+    cognitoUserPoolName:
+      Value: ${self:custom.userPoolName}
+    cognitoUserPool:
+      Value:
+        Ref: CognitoUserPool
+    congitoUserPoolClient:
+      Value:
+        Ref: CognitoUserPoolClient

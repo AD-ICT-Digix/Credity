@@ -24,12 +24,12 @@ jobs:
         run: cd services/web-dashboard && yarn
       - name: Build app
         run: cd services/web-dashboard && yarn build
-        env:
-          REACT_APP_SENTRY_DNS: ${{ secrets.WEB_DASHBOARD_SENTRY_DNS }}
-          REACT_APP_IDENTITY_POOL_ID: ${{ secrets.WEB_DASHBOARD_IDENTITY_POOL_ID }}
-          REACT_APP_APP_REGION: ${{ secrets.WEB_DASHBOARD_APP_REGION }}
-          REACT_APP_USER_POOL_ID: ${{ secrets.WEB_DASHBOARD_USER_POOL_ID }}
-          REACT_APP_USER_POOL_CLIENT_ID: ${{ secrets.WEB_DASHBOARD_USER_POOL_CLIENT_ID }}
+        # env:
+        #   REACT_APP_SENTRY_DNS: ${{ secrets.WEB_DASHBOARD_SENTRY_DNS }}
+        #   REACT_APP_IDENTITY_POOL_ID: ${{ secrets.WEB_DASHBOARD_IDENTITY_POOL_ID }}
+        #   REACT_APP_APP_REGION: ${{ secrets.WEB_DASHBOARD_APP_REGION }}
+        #   REACT_APP_USER_POOL_ID: ${{ secrets.WEB_DASHBOARD_USER_POOL_ID }}
+        #   REACT_APP_USER_POOL_CLIENT_ID: ${{ secrets.WEB_DASHBOARD_USER_POOL_CLIENT_ID }}
       - name: Deploy
         uses: serverless/github-action@v3.1
         with:

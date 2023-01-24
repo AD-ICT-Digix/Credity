@@ -1,0 +1,79 @@
+service: credity-api
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-domain-manager
+  - serverless-python-requirements
+
+custom:
+  stage: ${opt:stage, 'development'}
+  region: ${opt:region, 'eu-west-1'}
+  baseDomain: credity.nahnova.tech
+  tableName: ${self:service}-${self:custom.stage}
+  domain:
+    production: api.${self:custom.baseDomain}
+    default: api-${self:custom.stage}.${self:custom.baseDomain}
+  customDomain:
+    domainName: ${self:custom.domain.${self:custom.stage}, self:custom.domain.default}
+    stage: ${self:custom.stage}
+    certificateName: '*.credity.nahnova.tech'
+    # certificateArn: arn:aws:acm:eu-west-1:858928813840:certificate/a6bcdfc6-a329-4e7f-b066-6fd10b449d9c
+    createRoute53Record: true
+    endpointType: regional
+    apiType: http
+    autoDomain: true
+  prune:
+    automatic: true
+    number: 20
+  pythonRequirements:
+    pythonBin: /usr/bin/python3
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  region: ${self:custom.region}
+  stage: ${self:custom.stage}
+  deploymentMethod: direct
+  runtime: python3.9
+  timeout: 25
+  environment:
+    STAGE: ${self:custom.stage}
+    TABLE_NAME: ${self:custom.tableName}
+    REGION: ${self:custom.region}
+    COGNITO_USER_POOL_ID: ${cf:credity-auth-${self:custom.stage}.cognitoUserPool}
+  httpApi:
+    payload: "2.0"
+    cors: true
+    authorizers:
+      WebAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Join:
+            - ""
+            - - "https://cognito-idp."
+              - "${opt:region, self:provider.region}"
+              - ".amazonaws.com/"
+              - ${cf:credity-auth-${self:custom.stage}.cognitoUserPool}
+        audience: ${cf:credity-auth-${self:custom.stage}.congitoUserPoolClient}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource:
+            - "*"
+        - Effect: Allow
+          Action:
+            - cognito-idp:*
+          Resource:
+            - "*"
+
+functions:
+  - ${file(./src/functions/cognito-post-confirmation/function.yml)}
+  - ${file(./src/functions/status/function.yml)}
+
+resources:
+  - ${file(./src/infrastructure/database.yml)}

@@ -1,0 +1,36 @@
+service: credity-auth
+
+custom:
+  stage: ${opt:stage, 'development'}
+  region: ${opt:region, 'eu-west-1'}
+  identityPoolName: credity-identity-pool-${self:custom.stage}
+  userPoolName: credity-user-pool-${self:custom.stage}
+  userPoolClientName: credity-user-pool-client-${self:custom.stage}
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+  deploymentMethod: direct
+  # timeout: 30
+  # runtime: python3.8
+  environment:
+    REGION: ${self:custom.region}
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - cognito-idp:*
+          Resource:
+            - !GetAtt CognitoUserPool.Arn
+
+resources:
+  - ${file(./src/infrastructure/cognito/auth-role.yml)}
+  - ${file(./src/infrastructure/cognito/identity-pool.yml)}
+  - ${file(./src/infrastructure/cognito/user-pool.yml)}
+  - ${file(./src/infrastructure/cognito/outputs.yml)}
+  

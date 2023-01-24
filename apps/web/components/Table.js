@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link';
 
 export const Table = ({
 	data,
@@ -31,7 +31,7 @@ export const Table = ({
 												key={`row::${i}::${index}`}
 												className='py-4 px-6 whitespace-nowrap'
 											>
-												{link ? <Link to={link}>
+												{link ? <Link href={link}>
 													{content}
 												</Link> : <>{content}</>}
 											</td>
