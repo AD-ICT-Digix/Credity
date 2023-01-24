@@ -9,7 +9,6 @@ custom:
   stage: ${opt:stage, 'development'}
   region: ${opt:region, 'eu-west-1'}
   baseDomain: credity.nahnova.tech
-  domainCertificateArn: arn:aws:acm:us-east-1:858928813840:certificate/ee37e49d-35d1-42c3-8611-2bf72f1bf07b
   tableName: ${self:service}-${self:custom.stage}
   domain:
     production: api.${self:custom.baseDomain}
@@ -17,14 +16,17 @@ custom:
   customDomain:
     domainName: ${self:custom.domain.${self:custom.stage}, self:custom.domain.default}
     stage: ${self:custom.stage}
-    certificateName: ${self:custom.baseDomain}
+    certificateName: '*.credity.nahnova.tech'
+    # certificateArn: arn:aws:acm:eu-west-1:858928813840:certificate/a6bcdfc6-a329-4e7f-b066-6fd10b449d9c
     createRoute53Record: true
-    endpointType: REGIONAL
+    endpointType: regional
     apiType: http
     autoDomain: true
   prune:
     automatic: true
     number: 20
+  pythonRequirements:
+    pythonBin: /usr/bin/python3
 
 package:
   individually: true
@@ -35,7 +37,7 @@ provider:
   stage: ${self:custom.stage}
   deploymentMethod: direct
   runtime: python3.9
-  timeout: 30
+  timeout: 25
   environment:
     STAGE: ${self:custom.stage}
     TABLE_NAME: ${self:custom.tableName}
@@ -70,6 +72,7 @@ provider:
             - "*"
 
 functions:
+  - ${file(./src/functions/cognito-post-confirmation/function.yml)}
   - ${file(./src/functions/status/function.yml)}
 
 resources:

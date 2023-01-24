@@ -554,7 +554,7 @@
       "package": {
         "individually": true,
         "artifactsS3KeyDirname": "serverless/credity-auth/staging/code-artifacts",
-        "artifactDirectoryName": "serverless/credity-auth/staging/1673532455078-2023-01-12T14:07:35.078Z"
+        "artifactDirectoryName": "serverless/credity-auth/staging/1673859953400-2023-01-16T09:05:53.400Z"
       },
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
@@ -568,7 +568,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/credity-auth/staging/1673532455078-2023-01-12T14:07:35.078Z",
+    "artifactDirectoryName": "serverless/credity-auth/staging/1673859953400-2023-01-16T09:05:53.400Z",
     "artifact": ""
   }
 }

@@ -7,15 +7,15 @@
     "provider": {
       "name": "aws",
       "region": "eu-west-1",
-      "stage": "staging",
+      "stage": "production",
       "deploymentMethod": "direct",
       "runtime": "python3.9",
-      "timeout": 30,
+      "timeout": 25,
       "environment": {
-        "STAGE": "staging",
-        "TABLE_NAME": "credity-api-staging",
+        "STAGE": "production",
+        "TABLE_NAME": "credity-api-production",
         "REGION": "eu-west-1",
-        "COGNITO_USER_POOL_ID": "eu-west-1_C60CepJq0"
+        "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
       },
       "httpApi": {
         "payload": "2.0",
@@ -30,11 +30,11 @@
                   "https://cognito-idp.",
                   "eu-west-1",
                   ".amazonaws.com/",
-                  "eu-west-1_C60CepJq0"
+                  "eu-west-1_lPwBdbSuG"
                 ]
               ]
             },
-            "audience": "2fg622o4nq3g8m3k03k5pi7i8h"
+            "audience": "4c6s6lo0sb50qmug1os8c61s1t"
           }
         }
       },
@@ -136,10 +136,16 @@
               }
             }
           },
+          "CognitoDashpostDashconfirmationLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/credity-api-production-cognito-post-confirmation"
+            }
+          },
           "StatusLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/credity-api-staging-status"
+              "LogGroupName": "/aws/lambda/credity-api-production-status"
             }
           },
           "IamRoleLambdaExecution": {
@@ -168,7 +174,7 @@
                       "-",
                       [
                         "credity-api",
-                        "staging",
+                        "production",
                         "lambda"
                       ]
                     ]
@@ -184,7 +190,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/credity-api-staging*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/credity-api-production*:*"
                           }
                         ]
                       },
@@ -195,7 +201,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/credity-api-staging*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/credity-api-production*:*:*"
                           }
                         ]
                       },
@@ -215,7 +221,7 @@
                   "-",
                   [
                     "credity-api",
-                    "staging",
+                    "production",
                     {
                       "Ref": "AWS::Region"
                     },
@@ -225,6 +231,40 @@
               }
             }
           },
+          "CognitoDashpostDashconfirmationLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/credity-api/production/1674577434511-2023-01-24T16:23:54.511Z/cognito-post-confirmation.zip"
+              },
+              "Handler": "src/functions/cognito-post-confirmation/handler.main",
+              "Runtime": "python3.9",
+              "FunctionName": "credity-api-production-cognito-post-confirmation",
+              "MemorySize": 1024,
+              "Timeout": 25,
+              "Description": "This function is triggered after a user is confirmed in the Cognito User Pool. We'll use it to create a new user in our DynamoDB table.",
+              "Environment": {
+                "Variables": {
+                  "STAGE": "production",
+                  "TABLE_NAME": "credity-api-production",
+                  "REGION": "eu-west-1",
+                  "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CognitoDashpostDashconfirmationLogGroup"
+            ]
+          },
           "StatusLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
@@ -232,19 +272,19 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/credity-api/staging/1673535393841-2023-01-12T14:56:33.841Z/status.zip"
+                "S3Key": "serverless/credity-api/production/1674577434511-2023-01-24T16:23:54.511Z/status.zip"
               },
               "Handler": "src/functions/status/handler.main",
               "Runtime": "python3.9",
-              "FunctionName": "credity-api-staging-status",
+              "FunctionName": "credity-api-production-status",
               "MemorySize": 1024,
-              "Timeout": 30,
+              "Timeout": 25,
               "Environment": {
                 "Variables": {
-                  "STAGE": "staging",
-                  "TABLE_NAME": "credity-api-staging",
+                  "STAGE": "production",
+                  "TABLE_NAME": "credity-api-production",
                   "REGION": "eu-west-1",
-                  "COGNITO_USER_POOL_ID": "eu-west-1_C60CepJq0"
+                  "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
                 }
               },
               "Role": {
@@ -258,20 +298,148 @@
               "StatusLogGroup"
             ]
           },
-          "StatusLambdaVersionDYmlzDF7w3CWDyKcorzyZ4E36WrJRGrQWEaHJjHA": {
+          "CognitoDashpostDashconfirmationLambdaVersionR0dnrTTfgWWiXYntvvZJ8wucZgRmdePv1tf4y9VhRg": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CognitoDashpostDashconfirmationLambdaFunction"
+              },
+              "CodeSha256": "GDCqrfDvLXFnoVOCVSjhXFa8DoOBKnDkCt07Txwbsbw=",
+              "Description": "This function is triggered after a user is confirmed in the Cognito User Pool. We'll use it to create a new user in our DynamoDB table."
+            }
+          },
+          "StatusLambdaVersion30Ph41rn4An7wEXSIj9wrkrpg2oFslepIxVtrSHF0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "StatusLambdaFunction"
               },
-              "CodeSha256": "KdJuuTkCEkUhNQ2C/2swOauo9Vsdmm2z7eP8M28vy1g="
+              "CodeSha256": "GDCqrfDvLXFnoVOCVSjhXFa8DoOBKnDkCt07Txwbsbw="
             }
+          },
+          "CognitoDashpostDashconfirmationCustomCognitoUserPool1": {
+            "Type": "Custom::CognitoUserPool",
+            "Version": 1,
+            "DependsOn": [
+              "CognitoDashpostDashconfirmationLambdaFunction",
+              "CustomDashresourceDashexistingDashcupLambdaFunction"
+            ],
+            "Properties": {
+              "ServiceToken": {
+                "Fn::GetAtt": [
+                  "CustomDashresourceDashexistingDashcupLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "FunctionName": "credity-api-production-cognito-post-confirmation",
+              "UserPoolName": "credity-user-pool-production",
+              "UserPoolConfigs": [
+                {
+                  "Trigger": "PostConfirmation"
+                }
+              ],
+              "ForceDeploy": 1674577434537
+            }
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "production",
+                        "credity-api",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": "*",
+                        "Action": [
+                          "cognito-idp:ListUserPools",
+                          "cognito-idp:DescribeUserPool",
+                          "cognito-idp:UpdateUserPool"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Sub": "arn:${AWS::Partition}:lambda:*:*:function:credity-api-production-cognito-post-confirmation"
+                        },
+                        "Action": [
+                          "lambda:AddPermission",
+                          "lambda:RemovePermission"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Sub": "arn:${AWS::Partition}:iam::*:role/*"
+                        },
+                        "Action": [
+                          "iam:PassRole"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "CustomDashresourceDashexistingDashcupLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/credity-api/production/1674577434511-2023-01-24T16:23:54.511Z/custom-resources.zip"
+              },
+              "FunctionName": "credity-api-production-custom-resource-existing-cup",
+              "Handler": "cognito-user-pool/handler.handler",
+              "MemorySize": 1024,
+              "Runtime": "nodejs14.x",
+              "Timeout": 180,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleCustomResourcesLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
           },
           "HttpApi": {
             "Type": "AWS::ApiGatewayV2::Api",
             "Properties": {
-              "Name": "staging-credity-api",
+              "Name": "production-credity-api",
               "ProtocolType": "HTTP",
               "CorsConfiguration": {
                 "AllowHeaders": [
@@ -319,7 +487,7 @@
               "AuthorizerType": "JWT",
               "JwtConfiguration": {
                 "Audience": [
-                  "2fg622o4nq3g8m3k03k5pi7i8h"
+                  "4c6s6lo0sb50qmug1os8c61s1t"
                 ],
                 "Issuer": {
                   "$ref": "$[\"service\"][\"provider\"][\"httpApi\"][\"authorizers\"][\"WebAuthorizer\"][\"issuerUrl\"]"
@@ -375,7 +543,7 @@
                 "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"StatusLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
               },
               "PayloadFormatVersion": "2.0",
-              "TimeoutInMillis": 30000
+              "TimeoutInMillis": 25500
             }
           },
           "HttpApiRouteGetStatus": {
@@ -402,7 +570,7 @@
           "Table": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
-              "TableName": "credity-api-staging",
+              "TableName": "credity-api-production",
               "AttributeDefinitions": [
                 {
                   "AttributeName": "pk",
@@ -459,16 +627,25 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-credity-api-staging-ServerlessDeploymentBucketName"
+              "Name": "sls-credity-api-production-ServerlessDeploymentBucketName"
+            }
+          },
+          "CognitoDashpostDashconfirmationLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CognitoDashpostDashconfirmationLambdaVersionR0dnrTTfgWWiXYntvvZJ8wucZgRmdePv1tf4y9VhRg"
+            },
+            "Export": {
+              "Name": "sls-credity-api-production-CognitoDashpostDashconfirmationLambdaFunctionQualifiedArn"
             }
           },
           "StatusLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "StatusLambdaVersionDYmlzDF7w3CWDyKcorzyZ4E36WrJRGrQWEaHJjHA"
+              "Ref": "StatusLambdaVersion30Ph41rn4An7wEXSIj9wrkrpg2oFslepIxVtrSHF0"
             },
             "Export": {
-              "Name": "sls-credity-api-staging-StatusLambdaFunctionQualifiedArn"
+              "Name": "sls-credity-api-production-StatusLambdaFunctionQualifiedArn"
             }
           },
           "HttpApiId": {
@@ -477,7 +654,7 @@
               "Ref": "HttpApi"
             },
             "Export": {
-              "Name": "sls-credity-api-staging-HttpApiId"
+              "Name": "sls-credity-api-production-HttpApiId"
             }
           },
           "HttpApiUrl": {
@@ -502,7 +679,7 @@
               ]
             },
             "Export": {
-              "Name": "sls-credity-api-staging-HttpApiUrl"
+              "Name": "sls-credity-api-production-HttpApiUrl"
             }
           }
         }
@@ -592,27 +769,29 @@
       "vpc": {}
     },
     "custom": {
-      "stage": "staging",
+      "stage": "production",
       "region": "eu-west-1",
       "baseDomain": "credity.nahnova.tech",
-      "domainCertificateArn": "arn:aws:acm:us-east-1:858928813840:certificate/ee37e49d-35d1-42c3-8611-2bf72f1bf07b",
-      "tableName": "credity-api-staging",
+      "tableName": "credity-api-production",
       "domain": {
         "production": "api.credity.nahnova.tech",
-        "default": "api-staging.credity.nahnova.tech"
+        "default": "api-production.credity.nahnova.tech"
       },
       "customDomain": {
-        "domainName": "api-staging.credity.nahnova.tech",
-        "stage": "staging",
-        "certificateName": "credity.nahnova.tech",
+        "domainName": "api.credity.nahnova.tech",
+        "stage": "production",
+        "certificateName": "*.credity.nahnova.tech",
         "createRoute53Record": true,
-        "endpointType": "REGIONAL",
+        "endpointType": "regional",
         "apiType": "http",
         "autoDomain": true
       },
       "prune": {
         "automatic": true,
         "number": 20
+      },
+      "pythonRequirements": {
+        "pythonBin": "/usr/bin/python3"
       }
     },
     "plugins": [
@@ -622,6 +801,30 @@
     ],
     "pluginsData": {},
     "functions": {
+      "cognito-post-confirmation": {
+        "handler": "src/functions/cognito-post-confirmation/handler.main",
+        "description": "This function is triggered after a user is confirmed in the Cognito User Pool. We'll use it to create a new user in our DynamoDB table.",
+        "events": [
+          {
+            "cognitoUserPool": {
+              "pool": "credity-user-pool-production",
+              "trigger": "PostConfirmation",
+              "existing": true,
+              "forceDeploy": true
+            }
+          }
+        ],
+        "name": "credity-api-production-cognito-post-confirmation",
+        "module": ".",
+        "package": {
+          "artifact": "/Users/noaheutz/Developer/credity-product/services/api/.serverless/cognito-post-confirmation.zip"
+        },
+        "memory": 1024,
+        "timeout": 25,
+        "runtime": "python3.9",
+        "vpc": {},
+        "versionLogicalId": "CognitoDashpostDashconfirmationLambdaVersionR0dnrTTfgWWiXYntvvZJ8wucZgRmdePv1tf4y9VhRg"
+      },
       "status": {
         "handler": "src/functions/status/handler.main",
         "events": [
@@ -634,16 +837,16 @@
             "resolvedPath": "/status"
           }
         ],
-        "name": "credity-api-staging-status",
+        "name": "credity-api-production-status",
         "module": ".",
         "package": {
           "artifact": "/Users/noaheutz/Developer/credity-product/services/api/.serverless/status.zip"
         },
         "memory": 1024,
-        "timeout": 30,
+        "timeout": 25,
         "runtime": "python3.9",
         "vpc": {},
-        "versionLogicalId": "StatusLambdaVersionDYmlzDF7w3CWDyKcorzyZ4E36WrJRGrQWEaHJjHA"
+        "versionLogicalId": "StatusLambdaVersion30Ph41rn4An7wEXSIj9wrkrpg2oFslepIxVtrSHF0"
       }
     },
     "resources": {
@@ -651,7 +854,7 @@
         "Table": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
-            "TableName": "credity-api-staging",
+            "TableName": "credity-api-production",
             "AttributeDefinitions": [
               {
                 "AttributeName": "pk",
@@ -716,8 +919,8 @@
       },
       "package": {
         "individually": true,
-        "artifactsS3KeyDirname": "serverless/credity-api/staging/code-artifacts",
-        "artifactDirectoryName": "serverless/credity-api/staging/1673535393841-2023-01-12T14:56:33.841Z"
+        "artifactsS3KeyDirname": "serverless/credity-api/production/code-artifacts",
+        "artifactDirectoryName": "serverless/credity-api/production/1674577434511-2023-01-24T16:23:54.511Z"
       },
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
@@ -734,7 +937,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/credity-api/staging/1673535393841-2023-01-12T14:56:33.841Z",
+    "artifactDirectoryName": "serverless/credity-api/production/1674577434511-2023-01-24T16:23:54.511Z",
     "artifact": ""
   }
 }
