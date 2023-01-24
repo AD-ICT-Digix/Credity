@@ -11,7 +11,7 @@ export const Card = () => {
     <div className="border-indigo-500 border-2 shadow rounded-md p-4 max-w-sm w-full mx-auto">
       <div className="animate-pulse flex space-x-4">
         <div className="rounded-full h-12 w-12">
-          <img class="logo" src={avatar} alt="avatar" width="350" height="350" />
+          <img src={avatar} alt="avatar" width="350" height="350" />
         </div>
         <div className="flex-1 space-y-2">
           <div className="h-4 w-3/4">

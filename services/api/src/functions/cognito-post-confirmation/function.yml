@@ -1,0 +1,9 @@
+cognito-post-confirmation:
+  handler: src/functions/cognito-post-confirmation/handler.main
+  description: "This function is triggered after a user is confirmed in the Cognito User Pool. We'll use it to create a new user in our DynamoDB table."
+  events:
+    - cognitoUserPool:
+        pool: credity-user-pool-${self:custom.stage}
+        trigger: PostConfirmation
+        existing: true
+        forceDeploy: true
