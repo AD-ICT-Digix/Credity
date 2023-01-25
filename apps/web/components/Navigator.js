@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import FeatherIcon from 'feather-icons-react';
 
-export const Navigator = ({ children }) => {
+export const Navigator = ({ children, signOut, user }) => {
 	const router = useRouter();
 	const menuItems = [
 		{
@@ -34,10 +34,23 @@ export const Navigator = ({ children }) => {
 
 	return (
 		<div className='min-h-screen flex flex-col'>
-			{/* TODO: subnavigation */}
-			{/* <header className='bg-black sticky top-0 h-14 flex justify-center items-center font-semibold uppercase'>
-				Credity
-			</header> */}
+			<header className='bg-black sticky top-0 h-14 flex items-center font-semibold uppercase'>
+				<div className='flex flex-1 justify-between'>
+				USER: {user}
+				</div>
+					<div className='flex flex-1 justify-end'>
+				{user &&
+					<li className='m-2'>
+						<button onClick={signOut}
+							className='inline-flex relative items-center p-3 text-sm font-medium text-center text-white bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800'>
+							<div className='flex flex-1 justify-between margin-left'>
+								<FeatherIcon icon='log-out'/>
+							</div>
+						</button>
+					</li>
+				}
+				</div>
+			</header>
 			<div className='flex flex-col md:flex-row flex-1' >
 				<aside className='bg-black-500 w-full md:w-60 '>
 					<nav>
@@ -48,7 +61,6 @@ export const Navigator = ({ children }) => {
 										className={`flex p-2 bg-black-200 rounded hover:bg-indigo-400 cursor-pointer ${router.asPath === href && 'bg-indigo-600 text-white'
 											}`}
 									>
-										{/* div that colum row space between */}
 										<div className='flex flex-1 justify-between'>
 											<span className='text-md'>{title}</span>
 											<FeatherIcon icon={icon} />

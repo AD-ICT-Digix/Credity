@@ -26,7 +26,6 @@ export const Form = () => {
   useEffect(() => canBeSubmitted());
 
   return (
-  <div className="min-w-3xl flex-auto m-0 border-4 border-indigo-500 p-2 rounded-lg">
     <form>
       <div className="relative z-0 mb-3 w-full group">
         <input
@@ -151,7 +150,6 @@ export const Form = () => {
         </button>
       </div>
     </form>
-  </div>
 )
 }
 
