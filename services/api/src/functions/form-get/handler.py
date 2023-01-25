@@ -1,19 +1,21 @@
 import json
 import os
 import boto3
+from boto3.dynamodb.conditions import Key, Attr
 
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # get one expo specified by the expoId and return it in the response body as json
+    # get all forms data belonging to the expo and return them in the response body as json 
     response = table.query(
-        KeyConditionExpression=boto3.dynamodb.conditions.Key("expoId").eq(event["expoId"])
+        KeyConditionExpression=Key("pk").eq(f"FORM#{event['expoId']}"),
+        FilterExpression=Attr("parent").eq(event["parent"]),
     )
 
     return {
         "statusCode": 200,
-        "body": json.dumps(response["Items"])
+        "body": json.dumps(response["Forms"])
     }
     

@@ -4,5 +4,3 @@ form-create:
     - httpApi:
         path: /form
         method: post
-        authorizer:
-          name: WebAuthorizer 

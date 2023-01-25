@@ -8,12 +8,15 @@ def main(event, context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # list all expo forms and return them in the response body 
-    response = table.query(
-        KeyConditionExpression=boto3.dynamodb.conditions.Key("expoId").eq(event["expoId"])
+    # get one specific form belonging to the expo and return it in the response body as json 
+    response = table.get_item(
+        Key={
+            "pk": f"FORM#{event['expoId']}",
+            "sk": f"FORM#{event['formId']}"
+        },
     )
 
     return {
         "statusCode": 200,
-        "body": json.dumps(response["Items"])
+        "body": json.dumps(response["Form"])
     }

@@ -13,7 +13,7 @@ def main(event, context):
         Item={
             "pk": f"EXPO#{event['expoId']}", # expoId is the expo's unique identifier
 			"sk": f"EXPO#{event['expoId']}", # expoId is the expo's unique identifier 
-			"type": "EXPO", # expoId is the expo's unique identifier
+			"type": "EXPO",
 			"expoId": event["expoId"], 
 			"expoName": event["expoName"], 
         },
