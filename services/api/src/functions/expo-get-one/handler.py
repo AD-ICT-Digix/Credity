@@ -2,7 +2,7 @@ import json
 import os
 import boto3
 
-
+# | `expo-get` | Get a single expo | |
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")

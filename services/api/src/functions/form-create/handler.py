@@ -2,6 +2,7 @@ import json
 import os
 import boto3
 
+# | `form-create` | Create a form | expoId, name |
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")

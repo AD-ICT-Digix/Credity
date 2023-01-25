@@ -3,6 +3,7 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 
+# | `expo-get` | Get all expositions of this user | |
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")

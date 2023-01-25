@@ -3,6 +3,7 @@ import json
 import os
 import boto3
 
+# | `form-get-one` | get a single form | expoId, formId |
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")

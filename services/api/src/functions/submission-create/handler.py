@@ -3,6 +3,7 @@ import json
 import os
 import boto3
 
+# | `submission-create` | Create a new submission | { email: string, body: string, expoId: uuid, type: 'check-in' | 'check-out' | uuid->entity::Form} |
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")

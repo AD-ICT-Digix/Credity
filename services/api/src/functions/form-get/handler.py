@@ -3,6 +3,7 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 
+# | `form-get` | list all expo forms | expoId |
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")

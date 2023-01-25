@@ -2,6 +2,7 @@ import json
 import os
 import boto3
 
+# | `expo-delete` | Delete this expo | |
 def main(event, context):
 	# Get the DynamoDB resource
 	dynamodb = boto3.resource("dynamodb")

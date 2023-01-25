@@ -3,7 +3,7 @@ import os
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 
-
+# | `submission-get` | Get all submissions of this expo | { expo: uuid->entity::Expo, parent: 'check-in' | 'check-out' | uuid->entity:å:Form} |
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")
