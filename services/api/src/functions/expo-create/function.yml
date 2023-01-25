@@ -1,0 +1,8 @@
+expo-create:
+  handler: src/functions/expo-create/handler.handler.main
+  events:
+    - httpApi:
+        path: /expo
+        method: post
+        authorizer:
+          name: WebAuthorizer 

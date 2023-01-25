@@ -1,0 +1,6 @@
+form-create:
+  handler: src/functions/form-create/handler.handler.main
+  events:
+    - httpApi:
+        path: /form
+        method: post

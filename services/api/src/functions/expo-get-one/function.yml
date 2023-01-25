@@ -1,8 +1,8 @@
-expo-delete:
-  handler: src/functions/expo-delete/handler.handler.main
+expo-get-one:
+  handler: src/functions/expo-get-one/handler.handler.main
   events:
     - httpApi:
         path: /expo/{expoId}
-        method: delete
+        method: get
         authorizer:
           name: WebAuthorizer 

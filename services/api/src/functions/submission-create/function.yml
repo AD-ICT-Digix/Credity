@@ -1,0 +1,9 @@
+submisssion-create:
+  handler: src/functions/submission-create/handler.handler.main
+  events:
+    - httpApi:
+        path: /submission
+        method: post
+        authorizer:
+          name: WebAuthorizer
+          
