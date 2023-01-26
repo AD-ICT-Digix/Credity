@@ -9,3 +9,5 @@ export { Navigator } from './Navigator'
 export { Login } from './Login'
 export { Register } from './Register'
 export { ForgotPassword } from './ForgotPass'
+export { OverviewS } from './overviewStand'
+
