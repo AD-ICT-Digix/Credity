@@ -15,21 +15,6 @@ export const Navigator = ({ children, signOut, user }) => {
 			title: 'Expo Overview',
 			icon: 'archive',
 		},
-		{
-			href: '/expo/form',
-			title: 'Expo Form',
-			icon: 'check-square',
-		},
-		{
-			href: '/stand/dashboard',
-			title: 'Stand Dashboard',
-			icon: 'pie-chart',
-		},
-		{
-			href: '/stand/form',
-			title: 'Stand Form',
-			icon: 'check-circle',
-		},
 	];
 
 	return (
