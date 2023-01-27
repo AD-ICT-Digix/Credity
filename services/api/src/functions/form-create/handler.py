@@ -1,8 +1,8 @@
-# TODO: create form-create function
-
 import json
 import os
 import boto3
+import uuid
+import datetime
 
 # | `form-create` | Create a form | expoId, name |
 def main(event, context):
@@ -33,7 +33,9 @@ def main(event, context):
     return {   
         "statusCode": 200,
         "body": json.dumps({
-            "id": id,
+            "pk": f"FORM#{id}", # expoId is the expo's unique identifier
+            "sk": f"FORM#{id}", # expoId is the expo's unique identifier
+            "type": "FORM",
             "name": body.get('name'),
             "parent": body.get('expoId'),
             "createdAt": now,
