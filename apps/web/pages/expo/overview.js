@@ -28,6 +28,16 @@ export default function ExpoOverview() {
     API.get("APIGateway", `/expo/${id}`);
   };
 
+  const createForm = async (id) => {
+    API.post("APIGateway", "/form", {
+      body: {
+        expoId: `${id}`,
+        name: `Form from ${id}`,
+      },
+    });
+  };
+
+
   useEffect(() => {
     getExpos();
   }, []);
@@ -74,6 +84,16 @@ export default function ExpoOverview() {
                     >
                       <FeatherIcon icon="bar-chart-2" />
                     </Link>
+                    <button
+                      onClick={() =>
+                        createForm(
+                          expo.pk.split("#")[1]
+                        ) 
+                      }
+                      className="bg-black text-white p-4 shadow-md rounded-lg"
+                    >
+                      <FeatherIcon icon="file-text" />
+                    </button>
                   </div>
                 </div>
               </div>
