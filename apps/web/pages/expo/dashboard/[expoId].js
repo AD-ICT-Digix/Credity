@@ -12,7 +12,7 @@ import { API } from "aws-amplify";
 //     },
 //   };
 // }
-// FIXME: Error no current user 
+// FIXME: Error no current user change to acios get request that should work with no user
 export async function getStaticProps({ params }) {
   console.log("params", params);
   let expo = await API.get("APIGateway", `/expo/${params.expoId}`);

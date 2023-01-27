@@ -3,6 +3,8 @@ import { API } from "aws-amplify";
 import Link from "next/link";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import { QrPopup } from "../../components/QrPopup";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 
 export default function ExpoOverview() {
   const [expos, SetExpos] = React.useState([]);
@@ -117,28 +119,28 @@ export default function ExpoOverview() {
                     <FeatherIcon icon="plus" />
                   </button>
                 </div>
-                {/* container that contains all stands from the selected expo */}
+                {/* hide in popup */}
                 {forms?.map((form) => {
                   return (
                     <div className="flex flex-row justify-between items-center p-3 my-2 bg-gray-700 rounded-lg">
                       <p className="text-white">{form.name}</p>
                       <div className="flex flex-row space-x-1">
+                      <QrPopup
+                          link={`http://localhost:3000/expo/forms/${
+                            form.pk.split("#")[1]
+                          }`}
+                          trigger={
+                            <button className="bg-black text-white p-3.5 shadow-md rounded-lg disabled:opacity-50">
+                              QR
+                            </button>
+                          }
+                        />
                         <Link
                           href={`/expo/forms/${form.pk.split("#")[1]}`} // this will be the link to the form
                           className="bg-black text-white p-3.5 shadow-md rounded-lg disabled:opacity-50"
                         >
                           <FeatherIcon icon="chevron-right" />
                         </Link>
-                        <QrPopup
-                          link={`http://localhost:3000/expo/forms/${
-                            form.pk.split("#")[1]
-                          }`}
-                          trigger={
-                            <button className="bg-black text-white p-3.5 shadow-md rounded-lg disabled:opacity-50">
-                              <FeatherIcon icon="file-text" />
-                            </button>
-                          }
-                        />
                       </div>
                     </div>
                   );
