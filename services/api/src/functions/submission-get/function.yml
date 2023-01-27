@@ -1,5 +1,5 @@
 submisssion-get:
-  handler: src/functions/submission-get/handler.handler.main
+  handler: src/functions/submission-get/handler.main
   events:
     - httpApi:
         path: /submission

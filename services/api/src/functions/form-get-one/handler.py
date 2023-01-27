@@ -1,4 +1,4 @@
-# | `form-list` | list all expo forms | expoId |
+# TODO: create form-get-one function
 import json
 import os
 import boto3

@@ -1,3 +1,5 @@
+# TODO: create submission-get function
+
 import json
 import os
 import boto3

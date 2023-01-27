@@ -1,5 +1,5 @@
 submisssion-create:
-  handler: src/functions/submission-create/handler.handler.main
+  handler: src/functions/submission-create/handler.main
   events:
     - httpApi:
         path: /submission

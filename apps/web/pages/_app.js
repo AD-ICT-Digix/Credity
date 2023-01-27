@@ -16,6 +16,13 @@ API.configure({
     {
       name: "APIGateway",
       endpoint: "https://api.credity.nahnova.tech",
+      custom_header: async () => {
+        return {
+          Authorization: `Bearer ${(await Auth.currentSession())
+            .getIdToken()
+            .getJwtToken()}`,
+        };
+      },
     },
   ],
 });

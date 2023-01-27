@@ -1,5 +1,5 @@
 expo-delete:
-  handler: src/functions/expo-delete/handler.handler.main
+  handler: src/functions/expo-delete/handler.main
   events:
     - httpApi:
         path: /expo/{expoId}

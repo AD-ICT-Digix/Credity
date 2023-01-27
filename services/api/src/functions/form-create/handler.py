@@ -1,3 +1,5 @@
+# TODO: create form-create function
+
 import json
 import os
 import boto3
@@ -8,14 +10,34 @@ def main(event, context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # create a form containing the data from the event in the database 
+    id = uuid.uuid4()
+
+    body = json.loads(event.get('body'))
+
+    # Get current time in ISO 8601 format
+    now = datetime.datetime.now().isoformat()
+
+    # Create a expo  in the database
     response = table.put_item(
         Item={
-            "id": event["id"],
+            "pk": f"FORM#{id}", # expoId is the expo's unique identifier
+            "sk": f"FORM#{id}", # expoId is the expo's unique identifier
             "type": "FORM",
-            "expoId": event["expoId"],
-            "name": event["name"],
-        }
+            "name": body.get('name'),
+            "parent": body.get('expoId'),
+            "createdAt": now,
+            "updatedAt": now,
+        },
     )
+
+    return {   
+        "statusCode": 200,
+        "body": json.dumps({
+            "id": id,
+            "name": body.get('name'),
+            "parent": body.get('expoId'),
+            "createdAt": now,
+            "updatedAt": now,
+        }),
+    }
     
-    return event

@@ -11,9 +11,9 @@ export const Navigator = ({ children, signOut, user }) => {
 			icon: 'home',
 		},
 		{
-			href: '/expo/dashboard',
-			title: 'Expo Dashboard',
-			icon: 'bar-chart',
+			href: '/expo/overview',
+			title: 'Expo Overview',
+			icon: 'archive',
 		},
 		{
 			href: '/expo/form',
@@ -58,7 +58,7 @@ export const Navigator = ({ children, signOut, user }) => {
 							{menuItems.map(({ href, title, icon }) => (
 								<li className='m-2' key={title}>
 									<Link href={href}
-										className={`flex p-2 bg-black-200 rounded hover:bg-indigo-400 cursor-pointer ${router.asPath === href && 'bg-indigo-600 text-white'
+										className={`flex p-2 bg-black-200 rounded hover:bg-indigo-500 hover:text-white cursor-pointer ${router.asPath === href && 'bg-indigo-600 text-white'
 											}`}
 									>
 										<div className='flex flex-1 justify-between'>

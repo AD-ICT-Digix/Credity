@@ -1,5 +1,5 @@
 expo-get:
-  handler: src/functions/expo-get/handler.handler.main
+  handler: src/functions/expo-get/handler.main
   events:
     - httpApi:
         path: /expo

@@ -1,7 +1,7 @@
 import json
 import os
 import boto3
-from boto3.dynamodb.conditions import Key, Attr
+from boto3.dynamodb.conditions import Key, And
 
 # | `expo-get` | Get all expositions of this user | |
 def main(event, context):
@@ -9,15 +9,26 @@ def main(event, context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # get a all expo's in the database belonging to the user who created them and return them in the response body as json
+    userId = event.get('requestContext').get('authorizer').get('jwt').get('claims').get('sub')
+
     response = table.query(
-        # get the expo's belonging to the user who created them
-        KeyConditionExpression=Key("pk").eq(f"USER#{event['userId']}"),
-        # get the expo's belonging to the user who created them
-        FilterExpression=Attr("parent").eq("expo"),
+        IndexName="TypeParentIndex",
+        KeyConditionExpression=Key("type").eq("EXPO") & Key("parent").begins_with(userId),
     )
+    
+    if response.get("Items") is None:
+        return {
+            "statusCode": 404,
+            "body": "Not Found"
+        }
+
+    if len(response["Items"]) == 0:
+        return {
+            "statusCode": 404,
+            "body": "Not Found"
+        }
 
     return {
         "statusCode": 200,
-        "body": json.dumps(response["Expositions"])
+        "body": json.dumps(response["Items"])
     }

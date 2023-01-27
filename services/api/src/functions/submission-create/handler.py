@@ -1,4 +1,5 @@
-# | `submission-create` | Create a new submission | { email: string, body: string, expoId: uuid, type: 'check-in' | 'check-out' | uuid->entity::Form} |
+# TODO: create submission-create function
+
 import json
 import os
 import boto3
