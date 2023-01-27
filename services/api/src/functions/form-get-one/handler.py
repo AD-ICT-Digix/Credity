@@ -1,7 +1,7 @@
-# TODO: create form-get-one function
 import json
 import os
 import boto3
+from boto3.dynamodb.conditions import Key, And
 
 # | `form-get-one` | get a single form | expoId, formId |
 def main(event, context):
@@ -9,15 +9,28 @@ def main(event, context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # get one specific form belonging to the expo and return it in the response body as json 
-    response = table.get_item(
-        Key={
-            "pk": f"FORM#{event['expoId']}",
-            "sk": f"FORM#{event['formId']}"
-        },
+    params = event.get('pathParameters')
+
+    print(params)
+
+    response = table.query(
+        IndexName="TypeSkIndex",
+        KeyConditionExpression=Key("type").eq("FORM") & Key("sk").begins_with(f"FORM#{params['formId']}"),
     )
+    
+    if response.get("Items") is None:
+        return {
+            "statusCode": 404,
+            "body": "Not Found"
+        }
+
+    if len(response["Items"]) == 0:
+        return {
+            "statusCode": 404,
+            "body": "Not Found"
+        }
 
     return {
         "statusCode": 200,
-        "body": json.dumps(response["Form"])
+        "body": json.dumps(response["Items"][0])
     }

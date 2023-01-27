@@ -4,5 +4,3 @@ form-get:
     - httpApi:
         path: /form
         method: get
-        authorizer:
-          name: WebAuthorizer 

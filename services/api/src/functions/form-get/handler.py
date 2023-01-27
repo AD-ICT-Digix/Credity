@@ -1,5 +1,4 @@
-# TODO: create form-get function
-
+# FIXME: this needs to be updated so the parent is the expoId
 import json
 import os
 import boto3
@@ -11,14 +10,26 @@ def main(event, context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # get all forms data belonging to the expo and return them in the response body as json 
+    # get all forms for expo    
     response = table.query(
-        KeyConditionExpression=Key("pk").eq(f"FORM#{event['expoId']}"),
-        FilterExpression=Attr("parent").eq(event["parent"]),
-    )
+        IndexName="TypeParentIndex",
+        KeyConditionExpression=Key("type").eq("FORM"))
+        
+    
+    if response.get("Items") is None:
+        return {
+            "statusCode": 404,
+            "body": "Not Found"
+        }
+
+    if len(response["Items"]) == 0:
+        return {
+            "statusCode": 404,
+            "body": "Not Found"
+        }
 
     return {
         "statusCode": 200,
-        "body": json.dumps(response["Forms"])
+        "body": json.dumps(response["Items"])
     }
-    
+
