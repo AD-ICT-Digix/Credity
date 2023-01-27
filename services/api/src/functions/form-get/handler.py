@@ -1,4 +1,3 @@
-# FIXME: this needs to be updated so the parent is the expoId
 import json
 import os
 import boto3
@@ -10,26 +9,18 @@ def main(event, context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # get all forms for expo    
+    # Get expoId from path parameters
+    expoId = event.get("pathParameters").get("expoId")
+
+    # get all forms for expo
     response = table.query(
-        IndexName="TypeParentIndex",
-        KeyConditionExpression=Key("type").eq("FORM"))
-        
-    
+        IndexName="TypeParentIndex", KeyConditionExpression=Key("type").eq("FORM") & Key("parent").eq(expoId)
+    )
+
     if response.get("Items") is None:
-        return {
-            "statusCode": 404,
-            "body": "Not Found"
-        }
+        return {"statusCode": 404, "body": "Not Found"}
 
     if len(response["Items"]) == 0:
-        return {
-            "statusCode": 404,
-            "body": "Not Found"
-        }
+        return {"statusCode": 404, "body": "Not Found"}
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(response["Items"])
-    }
-
+    return {"statusCode": 200, "body": json.dumps(response["Items"])}

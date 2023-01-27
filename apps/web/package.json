@@ -23,6 +23,7 @@
     "react": "18.2.0",
     "react-chartjs-2": "^5.0.1",
     "react-dom": "18.2.0",
+    "reactjs-popup": "^2.0.5",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
     "styled-components": "^5.3.6"

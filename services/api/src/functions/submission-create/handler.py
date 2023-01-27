@@ -1,25 +1,46 @@
-# TODO: create submission-create function
-
 import json
 import os
 import boto3
+import uuid
+import datetime
 
-# | `submission-create` | Create a new submission | { email: string, body: string, expoId: uuid, type: 'check-in' | 'check-out' | uuid->entity::Form} |
+
 def main(event, context):
     # Get the DynamoDB resource
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
-    # create a submission containing the data from the event in the database
+    id = uuid.uuid4()
+
+    body = json.loads(event.get('body'))
+
+    print(body.get('input'))
+
+    # Get current time in ISO 8601 format
+    now = datetime.datetime.now().isoformat()
+
+    # Create a new submission
     response = table.put_item(
         Item={
-            "expoId": event["expoId"],
-            "email": event["email"],
-            "body": event["body"],
-            "type": event["type"], #check-in, check-out, or form id
+            "pk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
+            "sk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
+            "type": "SUBMISSION",
+            "input": body.get('input'),
+            "createdAt": now,
+            "updatedAt": now,
         },
     )
 
-    return event
+    return {   
+        "statusCode": 200,
+        "body": json.dumps({
+            "pk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
+            "sk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
+            "type": "SUBMISSION",
+            "parent": body.get('expoId'),
+            "input": body.get('input'),
+            "createdAt": now,
+            "updatedAt": now,
+        }),
+    }
     
-

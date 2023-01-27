@@ -4,5 +4,3 @@ expo-get-one:
     - httpApi:
         path: /expo/{expoId}
         method: get
-        authorizer:
-          name: WebAuthorizer 

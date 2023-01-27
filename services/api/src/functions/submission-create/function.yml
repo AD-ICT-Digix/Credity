@@ -1,4 +1,4 @@
-submisssion-create:
+submission-create:
   handler: src/functions/submission-create/handler.main
   events:
     - httpApi:

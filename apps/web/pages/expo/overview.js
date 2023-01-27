@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { API } from "aws-amplify";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
+import { QrPopup } from "../../components/QrPopup";
 
 export default function ExpoOverview() {
   const [expos, SetExpos] = React.useState([]);
@@ -28,12 +28,8 @@ export default function ExpoOverview() {
     });
   };
 
-  const getExpo = async (id) => {
-    API.get("APIGateway", `/expo/${id}`);
-  };
-
   const createForm = async (ExpoId, FormName) => {
-    API.post("APIGateway", "/form", {
+    API.post("APIGateway", `/expo/${ExpoId}/forms`, {
       body: {
         expoId: `${ExpoId}`,
         name: `${FormName}`,
@@ -41,8 +37,8 @@ export default function ExpoOverview() {
     });
   };
 
-  const getForms = async () => {
-    API.get("APIGateway", "/form").then((response) => {
+  const getForms = async (id) => {
+    API.get("APIGateway", `/expo/${id}/forms`).then((response) => {
       SetForms(response || []);
     });
   };
@@ -54,7 +50,6 @@ export default function ExpoOverview() {
   return (
     <>
       <div>
-        {/* Create Expo Button */}
         <div className="flex flex-row justify-center space-x-1 items-center">
           <button
             className="bg-indigo-600 text-white p-1 shadow-md rounded-lg disabled:opacity-50"
@@ -63,14 +58,12 @@ export default function ExpoOverview() {
           >
             Create expo
           </button>
-          {/* Name Expo Input */}
           <input
             type="text"
             className="w-full p-4 rounded-lg shadow-md"
             onChange={(e) => SetExpoName(e.target.value)}
             placeholder="Expo name"
           />
-          {/* Refresh Button */}
           <button
             className="bg-indigo-600 text-white p-3.5 shadow-md rounded-lg disabled:opacity-50"
             onClick={() => getExpos()}
@@ -78,42 +71,38 @@ export default function ExpoOverview() {
             <FeatherIcon icon="refresh-cw" />
           </button>
         </div>
-        {/* TODO: add this call to dashboard page */}
-        {/* <button
-          className="bg-indigo-600 text-white p-1 shadow-md rounded-lg disabled:opacity-50"
-          onClick={() => getExpo("0145b28e-c0c8-44f3-9379-e9d725f59ed5")}
-        >
-          Get Expo (b4e8e066-3182-421f-b29a-13ac09fb7be8)
-        </button> */}
       </div>
-      <div className="flex flex-row flex-wrap justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {expos?.map((expo) => {
           return (
-            <div className="w-96 m-4">
               <div className="bg-indigo-600 shadow-md rounded-lg p-4">
                 <h1 className="text-white text-2xl font-bold">{expo.title}</h1>
                 <p className="text-white text-sm">{expo.pk}</p>
                 <div className="flex flex-row  space-x-1 mt-4">
+                  {/* NOTE: DELETE */}
                   <button
                     onClick={() => deleteExpo(expo.pk.split("#")[1])}
                     className="bg-black text-white p-4 shadow-md rounded-lg"
                   >
                     <FeatherIcon icon="trash" />
                   </button>
+                  {/* NOTE: DASHBOARD */}
                   <Link
-                    href={`/expo/dashboard/${expo.id}`}
+                    href={`/expo/dashboard/${expo.pk.split("#")[1]}`}
                     className="bg-black text-white p-4 shadow-md rounded-lg"
                   >
                     <FeatherIcon icon="bar-chart-2" />
                   </Link>
+                  {/* NOTE: GET FORMS */}
                   <button
-                    onClick={() => getForms()}
+                    onClick={() => getForms(expo.pk.split("#")[1])}
                     className="bg-black text-white p-4 shadow-md rounded-lg"
                   >
-                    <FeatherIcon icon="file-text" />
+                    <FeatherIcon icon="list" />
                   </button>
                 </div>
                 <div className="flex flex-row justify-center space-x-1 items-center mt-4">
+                  {/* NOTE: CREATE FORM */}
                   <input
                     type="text"
                     className="w-full p-4 rounded-lg shadow-md"
@@ -128,22 +117,33 @@ export default function ExpoOverview() {
                     <FeatherIcon icon="plus" />
                   </button>
                 </div>
-                {/* list of stands under card */}
+                {/* container that contains all stands from the selected expo */}
                 {forms?.map((form) => {
                   return (
-                    <div className="flex flex-row justify-between items-center mt-4 bg-black rounded-lg">
-                      <p className="text-white p-4">{form.name}</p>
-                      <Link
-                        href={`/expo/forms/${form.pk.split("#")[1]}`} // this will be the link to the form
-                        className="bg-black text-white p-3.5 shadow-md rounded-lg disabled:opacity-50"
-                      >
-                        <FeatherIcon icon="chevron-right" />
-                      </Link>
+                    <div className="flex flex-row justify-between items-center p-3 my-2 bg-gray-700 rounded-lg">
+                      <p className="text-white">{form.name}</p>
+                      <div className="flex flex-row space-x-1">
+                        <Link
+                          href={`/expo/forms/${form.pk.split("#")[1]}`} // this will be the link to the form
+                          className="bg-black text-white p-3.5 shadow-md rounded-lg disabled:opacity-50"
+                        >
+                          <FeatherIcon icon="chevron-right" />
+                        </Link>
+                        <QrPopup
+                          link={`http://localhost:3000/expo/forms/${
+                            form.pk.split("#")[1]
+                          }`}
+                          trigger={
+                            <button className="bg-black text-white p-3.5 shadow-md rounded-lg disabled:opacity-50">
+                              <FeatherIcon icon="file-text" />
+                            </button>
+                          }
+                        />
+                      </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
           );
         })}
       </div>

@@ -2,5 +2,5 @@ form-create:
   handler: src/functions/form-create/handler.main
   events:
     - httpApi:
-        path: /form
+        path: /expo/{expoId}/forms
         method: post

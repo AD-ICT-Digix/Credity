@@ -1,4 +1,4 @@
-submisssion-get:
+submission-get:
   handler: src/functions/submission-get/handler.main
   events:
     - httpApi:
