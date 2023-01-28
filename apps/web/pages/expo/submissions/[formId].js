@@ -92,7 +92,7 @@ export default function FormSubmissions({ form }) {
           <Image
             id="qr-code"
             className="w-32 h-32"
-            text={`https://credity.nahnova.tech/expo/submissions/${
+            text={`credity.vercel.app/expo/submissions/${
               form.pk.split("#")[1]
             }`}
           />
