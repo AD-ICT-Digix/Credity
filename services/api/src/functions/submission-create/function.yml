@@ -2,7 +2,7 @@ submission-create:
   handler: src/functions/submission-create/handler.main
   events:
     - httpApi:
-        path: /submission
+        path: /expo/{expoId}/forms/{formId}/submissions
         method: post
         authorizer:
           name: WebAuthorizer

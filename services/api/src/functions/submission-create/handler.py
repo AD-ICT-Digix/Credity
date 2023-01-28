@@ -10,34 +10,38 @@ def main(event, context):
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["TABLE_NAME"])
 
+    # Generate a unique ID for the submission
     id = uuid.uuid4()
 
+    # Get body parameters
     body = json.loads(event.get('body'))
-
-    print(body.get('input'))
 
     # Get current time in ISO 8601 format
     now = datetime.datetime.now().isoformat()
 
     # Create a new submission
-    response = table.put_item(
+    table.put_item(
         Item={
-            "pk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
-            "sk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
+            "pk": f"SUBMISSION#{id}",
+            "sk": f"SUBMISSION#{id}",
             "type": "SUBMISSION",
+            "expoId": body.get('expoId'),
+            "parent": body.get('formId'),
             "input": body.get('input'),
             "createdAt": now,
             "updatedAt": now,
-        },
+        }
     )
+    
 
     return {   
         "statusCode": 200,
         "body": json.dumps({
-            "pk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
-            "sk": f"SUBMISSION#{id}", # expoId is the expo's unique identifier
+            "pk": f"SUBMISSION#{id}", 
+            "sk": f"SUBMISSION#{id}", 
             "type": "SUBMISSION",
-            "parent": body.get('expoId'),
+            "expoId": body.get('expoId'),
+            "parent": body.get('formId'),
             "input": body.get('input'),
             "createdAt": now,
             "updatedAt": now,

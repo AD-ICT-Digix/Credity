@@ -16,6 +16,7 @@ export async function getStaticProps({ params }) {
   };
 }
 
+
 export async function getStaticPaths() {
   return {
     // don't do anything here for now to speed up build
@@ -35,6 +36,7 @@ export default function FormInput({ form }) {
 
   const handleSubmission = async (
     expoId = form.parent,
+    formId = form.pk.split("#")[1],
     input = {
       firstName: firstName,
       insertion: insertion,
@@ -45,12 +47,17 @@ export default function FormInput({ form }) {
       acceptedTerms: acceptedTerms,
     }
   ) => {
-    API.post("APIGateway", "/submission", {
-      body: {
-        expoId,
-        input,
-      },
-    });
+    API.post(
+      "APIGateway",
+        `/expo/${expoId}/forms/${formId}/submissions`,
+      {
+        body: {
+          formId,
+          expoId,
+          input,
+        },
+      }
+    );
   };
 
   return (
@@ -93,8 +100,13 @@ export default function FormInput({ form }) {
         placeholder="Beschrijving"
       />
       <div className="mt-4">
-        <input type="checkbox" onChange={(e) => SetAcceptedTerms(e.target.value)} />
-        <label className="ml-2">Ik ga akkoord met de algemene voorwaarden</label>
+        <input
+          type="checkbox"
+          onChange={(e) => SetAcceptedTerms(e.target.value)}
+        />
+        <label className="ml-2">
+          Ik ga akkoord met de algemene voorwaarden
+        </label>
       </div>
       <button
         className="mt-4 w-full bg-indigo-600 text-white p-4 shadow-md rounded-lg disabled:opacity-50"
@@ -102,7 +114,7 @@ export default function FormInput({ form }) {
         disabled={!acceptedTerms}
       >
         Verstuur
-      </button>
+      </button>    
     </div>
   );
 }
