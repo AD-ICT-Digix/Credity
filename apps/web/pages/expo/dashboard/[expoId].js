@@ -111,7 +111,7 @@ export default function Expo({ expo }) {
                   <td className="px-6 py-4 text-right">
                     <div className="flex flex-row space-x-1">
                       <QrPopup
-                        link={`credity.vercel.app/expo/forms/${
+                        link={`https://credity.vercel.app/expo/forms/${
                           form.pk.split("#")[1]
                         }`}
                         trigger={
