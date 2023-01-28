@@ -1,9 +1,7 @@
-submisssion-get:
-  handler: src/functions/submission-get/handler.handler.main
+submission-get:
+  handler: src/functions/submission-get/handler.main
   events:
     - httpApi:
-        path: /submission
+        path: /expo/{expoId}/forms/{formId}/submissions
         method: get
-        authorizer:
-          name: WebAuthorizer
           

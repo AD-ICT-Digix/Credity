@@ -73,6 +73,15 @@ provider:
 
 functions:
   - ${file(./src/functions/cognito-post-confirmation/function.yml)}
+  - ${file(./src/functions/expo-create/function.yml)} 
+  - ${file(./src/functions/expo-delete/function.yml)} 
+  - ${file(./src/functions/expo-get/function.yml)}  
+  - ${file(./src/functions/expo-get-one/function.yml)}
+  - ${file(./src/functions/form-create/function.yml)}
+  - ${file(./src/functions/form-get/function.yml)}
+  - ${file(./src/functions/form-get-one/function.yml)}
+  - ${file(./src/functions/submission-create/function.yml)}
+  - ${file(./src/functions/submission-get/function.yml)}
   - ${file(./src/functions/status/function.yml)}
 
 resources:

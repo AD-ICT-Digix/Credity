@@ -1,8 +1,6 @@
 form-get:
-  handler: src/functions/form-get/handler.handler.main
+  handler: src/functions/form-get/handler.main
   events:
     - httpApi:
-        path: /form
+        path: /expo/{expoId}/forms
         method: get
-        authorizer:
-          name: WebAuthorizer 
