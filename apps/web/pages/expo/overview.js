@@ -57,7 +57,10 @@ export default function ExpoOverview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {expos?.map((expo) => {
           return (
-            <div className="bg-indigo-600 shadow-md rounded-lg p-4">
+            <div
+              className="bg-indigo-600 shadow-md rounded-lg p-4"
+              key={expo.pk.split("#")[1]}
+            >
               <h1 className="text-white font-bold text-2xl truncate">
                 {expo.title}
               </h1>

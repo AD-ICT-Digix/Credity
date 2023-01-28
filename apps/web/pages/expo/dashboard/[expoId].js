@@ -45,6 +45,7 @@ export default function Expo({ expo }) {
       SetForms(response || []);
     });
   };
+
   useEffect(() => {
     getForms(expo.pk.split("#")[1]);
   }, []);
@@ -91,9 +92,9 @@ export default function Expo({ expo }) {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {forms.map((form) => {
-              return (
+          {forms.map((form) => {
+            return (
+              <tbody key={form.pk.split("#")[1]}>
                 <tr className="bg-white border-b dark:bg-zinc-800 dark:border-zinc-700">
                   <th
                     scope="row"
@@ -135,9 +136,9 @@ export default function Expo({ expo }) {
                     </div>
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
+              </tbody>
+            );
+          })}
         </table>
       </div>
     </div>
