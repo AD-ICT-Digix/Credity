@@ -57,6 +57,7 @@ const Expo = () => {
   return (
     <>
       <div>
+        <h1 className="text-4xl font-bold mb-4">All Expositions</h1>
         <div className="flex flex-row justify-center space-x-1 items-center">
           <input
             type="text"

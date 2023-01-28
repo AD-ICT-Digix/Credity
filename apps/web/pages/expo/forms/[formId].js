@@ -62,7 +62,7 @@ export default function FormInput({ form }) {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold">{form.name}</h1>
+      <h1 className="text-4xl font-bold">Form: {form.name}</h1>
       <input
         type="text"
         className="mt-4 w-full p-4 rounded-lg shadow-md"

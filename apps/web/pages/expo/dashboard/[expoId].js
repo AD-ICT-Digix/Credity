@@ -52,7 +52,7 @@ export default function Expo({ expo }) {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold">{expo.title}</h1>
+      <h1 className="text-4xl font-bold">Exposition: {expo.title}</h1>
       <div className="flex flex-row justify-center space-x-1 items-center mt-4">
         <input
           type="text"

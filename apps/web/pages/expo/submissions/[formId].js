@@ -70,7 +70,7 @@ export default function FormSubmissions({ form }) {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-4">{form.name} Analytics</h1>
+      <h1 className="text-4xl font-bold mb-4">Analytics: {form.name}</h1>
       {/* grid div that contains stat cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
