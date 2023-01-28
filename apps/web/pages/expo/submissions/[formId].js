@@ -88,19 +88,17 @@ export default function FormSubmissions({ form }) {
           Export to CSV
         </button>
         {/* button that downloads qr code */}
-        <button
-          className="bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded"
-        >
-        <Image
-          id="qr-code"
-          className="w-32 h-32"
-          text={`https://credity.nahnova.tech/expo/submissions/${
-            form.pk.split("#")[1]
-          }`}
-        />
-          Download QR Code by right clicking on the image and selecting "Save Image As"
+        <button className="bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded">
+          <Image
+            id="qr-code"
+            className="w-32 h-32"
+            text={`https://credity.nahnova.tech/expo/submissions/${
+              form.pk.split("#")[1]
+            }`}
+          />
+          Download QR Code by right clicking on the image and selecting Save
+          Image As
         </button>
-
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-4">
         <table className="w-full text-sm text-left text-zinc-500 dark:text-zinc-400">
@@ -135,9 +133,9 @@ export default function FormSubmissions({ form }) {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {submissions.map((submission) => {
-              return (
+          {submissions.map((submission) => {
+            return (
+              <tbody key={submission.pk.split("#")[1]}>
                 <tr className="bg-white border-b dark:bg-zinc-800 dark:border-zinc-700">
                   <th
                     scope="row"
@@ -170,9 +168,9 @@ export default function FormSubmissions({ form }) {
                     {submission.createdAt}
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
+              </tbody>
+            );
+          })}
         </table>
       </div>
     </div>
