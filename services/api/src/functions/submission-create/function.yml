@@ -4,6 +4,4 @@ submission-create:
     - httpApi:
         path: /expo/{expoId}/forms/{formId}/submissions
         method: post
-        authorizer:
-          name: WebAuthorizer
           

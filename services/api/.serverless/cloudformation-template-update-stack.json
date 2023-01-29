@@ -1,0 +1,1875 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "CognitoDashpostDashconfirmationLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-cognito-post-confirmation"
+      }
+    },
+    "ExpoDashcreateLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-expo-create"
+      }
+    },
+    "ExpoDashdeleteLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-expo-delete"
+      }
+    },
+    "ExpoDashgetLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-expo-get"
+      }
+    },
+    "ExpoDashgetDashoneLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-expo-get-one"
+      }
+    },
+    "FormDashcreateLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-form-create"
+      }
+    },
+    "FormDashgetLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-form-get"
+      }
+    },
+    "FormDashgetDashoneLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-form-get-one"
+      }
+    },
+    "SubmissionDashcreateLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-submission-create"
+      }
+    },
+    "SubmissionDashgetLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-submission-get"
+      }
+    },
+    "StatusLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/credity-api-production-status"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "credity-api",
+                  "production",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/credity-api-production*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/credity-api-production*:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:*"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:*"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "credity-api",
+              "production",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "CognitoDashpostDashconfirmationLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/cognito-post-confirmation.zip"
+        },
+        "Handler": "src/functions/cognito-post-confirmation/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-cognito-post-confirmation",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Description": "This function is triggered after a user is confirmed in the Cognito User Pool. We'll use it to create a new user in our DynamoDB table.",
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "CognitoDashpostDashconfirmationLogGroup"
+      ]
+    },
+    "ExpoDashcreateLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/expo-create.zip"
+        },
+        "Handler": "src/functions/expo-create/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-expo-create",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ExpoDashcreateLogGroup"
+      ]
+    },
+    "ExpoDashdeleteLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/expo-delete.zip"
+        },
+        "Handler": "src/functions/expo-delete/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-expo-delete",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ExpoDashdeleteLogGroup"
+      ]
+    },
+    "ExpoDashgetLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/expo-get.zip"
+        },
+        "Handler": "src/functions/expo-get/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-expo-get",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ExpoDashgetLogGroup"
+      ]
+    },
+    "ExpoDashgetDashoneLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/expo-get-one.zip"
+        },
+        "Handler": "src/functions/expo-get-one/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-expo-get-one",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ExpoDashgetDashoneLogGroup"
+      ]
+    },
+    "FormDashcreateLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/form-create.zip"
+        },
+        "Handler": "src/functions/form-create/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-form-create",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "FormDashcreateLogGroup"
+      ]
+    },
+    "FormDashgetLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/form-get.zip"
+        },
+        "Handler": "src/functions/form-get/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-form-get",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "FormDashgetLogGroup"
+      ]
+    },
+    "FormDashgetDashoneLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/form-get-one.zip"
+        },
+        "Handler": "src/functions/form-get-one/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-form-get-one",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "FormDashgetDashoneLogGroup"
+      ]
+    },
+    "SubmissionDashcreateLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/submission-create.zip"
+        },
+        "Handler": "src/functions/submission-create/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-submission-create",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "SubmissionDashcreateLogGroup"
+      ]
+    },
+    "SubmissionDashgetLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/submission-get.zip"
+        },
+        "Handler": "src/functions/submission-get/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-submission-get",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "SubmissionDashgetLogGroup"
+      ]
+    },
+    "StatusLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/status.zip"
+        },
+        "Handler": "src/functions/status/handler.main",
+        "Runtime": "python3.9",
+        "FunctionName": "credity-api-production-status",
+        "MemorySize": 1024,
+        "Timeout": 25,
+        "Environment": {
+          "Variables": {
+            "STAGE": "production",
+            "TABLE_NAME": "credity-api-production",
+            "REGION": "eu-west-1",
+            "COGNITO_USER_POOL_ID": "eu-west-1_lPwBdbSuG"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "StatusLogGroup"
+      ]
+    },
+    "CognitoDashpostDashconfirmationLambdaVersionotdSxINhFvktYoIksQI8fnOPpKzzMJCiBLOkCTpEY": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CognitoDashpostDashconfirmationLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260=",
+        "Description": "This function is triggered after a user is confirmed in the Cognito User Pool. We'll use it to create a new user in our DynamoDB table."
+      }
+    },
+    "ExpoDashdeleteLambdaVersion0BXZUZo9geTzJpmNEIWgScxHydFdrcrvBNwxK5dlnE": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ExpoDashdeleteLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "ExpoDashcreateLambdaVersionrryoUYLuyKEkhKng9LYPQiRMXvgbbuDLLwdNCX010": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ExpoDashcreateLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "FormDashgetLambdaVersionj7Je3Z5Lsy7co1uk6uq5sv1mxMVWbbkbFPRtJgNV1g": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "FormDashgetLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "ExpoDashgetLambdaVersionI2cuLDYguYDxRNWgmLezTpgl8Ru7ZkW4BYR66hWk0": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ExpoDashgetLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "SubmissionDashcreateLambdaVersion7mJ1UVvcegmnFhxaDdMha4fZMWMVMcI6uPanTWLhBE": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SubmissionDashcreateLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "FormDashcreateLambdaVersionyHz2oLRcOqfT5QSoLI6NfOoybGIXEI9K4lb3jyofc": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "FormDashcreateLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "SubmissionDashgetLambdaVersionfw2iNSHeCEPvrRI6SVPTXSXzNiQpYvYgnr0qpsx6sA": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SubmissionDashgetLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "ExpoDashgetDashoneLambdaVersionRiJF09Qr3kQLkBvIaogBpgJhKNL8hlWEFBUpclMp8j8": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ExpoDashgetDashoneLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "StatusLambdaVersioniLPddf7Yaa932zz6xhdCxI0fW8NFR4blcfvrCj5XC90": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "StatusLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "FormDashgetDashoneLambdaVersion2VPvnoBE6DanVZS2ejZLXeuHTlgJiF08aDM0BzQ": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "FormDashgetDashoneLambdaFunction"
+        },
+        "CodeSha256": "dzt59M4pptpwMffxYruKj23KFJ0rUA7IuYEcJa7x260="
+      }
+    },
+    "CognitoDashpostDashconfirmationCustomCognitoUserPool1": {
+      "Type": "Custom::CognitoUserPool",
+      "Version": 1,
+      "DependsOn": [
+        "CognitoDashpostDashconfirmationLambdaFunction",
+        "CustomDashresourceDashexistingDashcupLambdaFunction"
+      ],
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomDashresourceDashexistingDashcupLambdaFunction",
+            "Arn"
+          ]
+        },
+        "FunctionName": "credity-api-production-cognito-post-confirmation",
+        "UserPoolName": "credity-user-pool-production",
+        "UserPoolConfigs": [
+          {
+            "Trigger": "PostConfirmation"
+          }
+        ],
+        "ForceDeploy": 1674990168808
+      }
+    },
+    "IamRoleCustomResourcesLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "production",
+                  "credity-api",
+                  "custom-resources-lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "cognito-idp:ListUserPools",
+                    "cognito-idp:DescribeUserPool",
+                    "cognito-idp:UpdateUserPool"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:lambda:*:*:function:credity-api-production-cognito-post-confirmation"
+                  },
+                  "Action": [
+                    "lambda:AddPermission",
+                    "lambda:RemovePermission"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:iam::*:role/*"
+                  },
+                  "Action": [
+                    "iam:PassRole"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CustomDashresourceDashexistingDashcupLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/credity-api/production/1674990168699-2023-01-29T11:02:48.699Z/custom-resources.zip"
+        },
+        "FunctionName": "credity-api-production-custom-resource-existing-cup",
+        "Handler": "cognito-user-pool/handler.handler",
+        "MemorySize": 1024,
+        "Runtime": "nodejs14.x",
+        "Timeout": 180,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleCustomResourcesLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "IamRoleCustomResourcesLambdaExecution"
+      ]
+    },
+    "HttpApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "production-credity-api",
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "Content-Type",
+            "X-Amz-Date",
+            "Authorization",
+            "X-Api-Key",
+            "X-Amz-Security-Token",
+            "X-Amz-User-Agent",
+            "X-Amzn-Trace-Id"
+          ],
+          "AllowMethods": [
+            "OPTIONS",
+            "POST",
+            "DELETE",
+            "GET"
+          ],
+          "AllowOrigins": [
+            "*"
+          ]
+        }
+      }
+    },
+    "HttpApiStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": false
+        }
+      }
+    },
+    "HttpApiAuthorizerWebAuthorizer": {
+      "Type": "AWS::ApiGatewayV2::Authorizer",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "Name": "WebAuthorizer",
+        "IdentitySource": [
+          "$request.header.Authorization"
+        ],
+        "AuthorizerType": "JWT",
+        "JwtConfiguration": {
+          "Audience": [
+            "4c6s6lo0sb50qmug1os8c61s1t"
+          ],
+          "Issuer": {
+            "Fn::Join": [
+              "",
+              [
+                "https://cognito-idp.",
+                "eu-west-1",
+                ".amazonaws.com/",
+                "eu-west-1_lPwBdbSuG"
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "ExpoDashcreateLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ExpoDashcreateLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationExpoDashcreate": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ExpoDashcreateLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRoutePostExpo": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /expo",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationExpoDashcreate"
+              }
+            ]
+          ]
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiAuthorizerWebAuthorizer"
+        }
+      },
+      "DependsOn": "HttpApiIntegrationExpoDashcreate"
+    },
+    "ExpoDashdeleteLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ExpoDashdeleteLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationExpoDashdelete": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ExpoDashdeleteLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRouteDeleteExpoExpoidVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "DELETE /expo/{expoId}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationExpoDashdelete"
+              }
+            ]
+          ]
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiAuthorizerWebAuthorizer"
+        }
+      },
+      "DependsOn": "HttpApiIntegrationExpoDashdelete"
+    },
+    "ExpoDashgetLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ExpoDashgetLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationExpoDashget": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ExpoDashgetLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRouteGetExpo": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /expo",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationExpoDashget"
+              }
+            ]
+          ]
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiAuthorizerWebAuthorizer"
+        }
+      },
+      "DependsOn": "HttpApiIntegrationExpoDashget"
+    },
+    "ExpoDashgetDashoneLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ExpoDashgetDashoneLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationExpoDashgetDashone": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ExpoDashgetDashoneLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRouteGetExpoExpoidVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /expo/{expoId}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationExpoDashgetDashone"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationExpoDashgetDashone"
+    },
+    "FormDashcreateLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "FormDashcreateLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationFormDashcreate": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "FormDashcreateLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRoutePostExpoExpoidVarForms": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /expo/{expoId}/forms",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationFormDashcreate"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationFormDashcreate"
+    },
+    "FormDashgetLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "FormDashgetLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationFormDashget": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "FormDashgetLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRouteGetExpoExpoidVarForms": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /expo/{expoId}/forms",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationFormDashget"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationFormDashget"
+    },
+    "FormDashgetDashoneLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "FormDashgetDashoneLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationFormDashgetDashone": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "FormDashgetDashoneLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRouteGetExpoExpoidVarFormFormidVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /expo/{expoId}/form/{formId}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationFormDashgetDashone"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationFormDashgetDashone"
+    },
+    "SubmissionDashcreateLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SubmissionDashcreateLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationSubmissionDashcreate": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "SubmissionDashcreateLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRoutePostExpoExpoidVarFormsFormidVarSubmissions": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /expo/{expoId}/forms/{formId}/submissions",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationSubmissionDashcreate"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationSubmissionDashcreate"
+    },
+    "SubmissionDashgetLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SubmissionDashgetLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationSubmissionDashget": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "SubmissionDashgetLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRouteGetExpoExpoidVarFormsFormidVarSubmissions": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /expo/{expoId}/forms/{formId}/submissions",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationSubmissionDashget"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationSubmissionDashget"
+    },
+    "StatusLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "StatusLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationStatus": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "StatusLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 25500
+      }
+    },
+    "HttpApiRouteGetStatus": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /status",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationStatus"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationStatus"
+    },
+    "Table": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "credity-api-production",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "type",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "parent",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE"
+          }
+        ],
+        "TimeToLiveSpecification": {
+          "AttributeName": "expiresAt",
+          "Enabled": true
+        },
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "TypeSkIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "type",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "sk",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          },
+          {
+            "IndexName": "TypeParentIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "type",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "parent",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-ServerlessDeploymentBucketName"
+      }
+    },
+    "CognitoDashpostDashconfirmationLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CognitoDashpostDashconfirmationLambdaVersionotdSxINhFvktYoIksQI8fnOPpKzzMJCiBLOkCTpEY"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-CognitoDashpostDashconfirmationLambdaFunctionQualifiedArn"
+      }
+    },
+    "ExpoDashdeleteLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ExpoDashdeleteLambdaVersion0BXZUZo9geTzJpmNEIWgScxHydFdrcrvBNwxK5dlnE"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-ExpoDashdeleteLambdaFunctionQualifiedArn"
+      }
+    },
+    "ExpoDashcreateLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ExpoDashcreateLambdaVersionrryoUYLuyKEkhKng9LYPQiRMXvgbbuDLLwdNCX010"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-ExpoDashcreateLambdaFunctionQualifiedArn"
+      }
+    },
+    "FormDashgetLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "FormDashgetLambdaVersionj7Je3Z5Lsy7co1uk6uq5sv1mxMVWbbkbFPRtJgNV1g"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-FormDashgetLambdaFunctionQualifiedArn"
+      }
+    },
+    "ExpoDashgetLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ExpoDashgetLambdaVersionI2cuLDYguYDxRNWgmLezTpgl8Ru7ZkW4BYR66hWk0"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-ExpoDashgetLambdaFunctionQualifiedArn"
+      }
+    },
+    "SubmissionDashcreateLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SubmissionDashcreateLambdaVersion7mJ1UVvcegmnFhxaDdMha4fZMWMVMcI6uPanTWLhBE"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-SubmissionDashcreateLambdaFunctionQualifiedArn"
+      }
+    },
+    "FormDashcreateLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "FormDashcreateLambdaVersionyHz2oLRcOqfT5QSoLI6NfOoybGIXEI9K4lb3jyofc"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-FormDashcreateLambdaFunctionQualifiedArn"
+      }
+    },
+    "SubmissionDashgetLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SubmissionDashgetLambdaVersionfw2iNSHeCEPvrRI6SVPTXSXzNiQpYvYgnr0qpsx6sA"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-SubmissionDashgetLambdaFunctionQualifiedArn"
+      }
+    },
+    "ExpoDashgetDashoneLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ExpoDashgetDashoneLambdaVersionRiJF09Qr3kQLkBvIaogBpgJhKNL8hlWEFBUpclMp8j8"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-ExpoDashgetDashoneLambdaFunctionQualifiedArn"
+      }
+    },
+    "StatusLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "StatusLambdaVersioniLPddf7Yaa932zz6xhdCxI0fW8NFR4blcfvrCj5XC90"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-StatusLambdaFunctionQualifiedArn"
+      }
+    },
+    "FormDashgetDashoneLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "FormDashgetDashoneLambdaVersion2VPvnoBE6DanVZS2ejZLXeuHTlgJiF08aDM0BzQ"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-FormDashgetDashoneLambdaFunctionQualifiedArn"
+      }
+    },
+    "HttpApiId": {
+      "Description": "Id of the HTTP API",
+      "Value": {
+        "Ref": "HttpApi"
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-HttpApiId"
+      }
+    },
+    "HttpApiUrl": {
+      "Description": "URL of the HTTP API",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "HttpApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "sls-credity-api-production-HttpApiUrl"
+      }
+    }
+  }
+}
