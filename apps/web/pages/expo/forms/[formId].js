@@ -47,15 +47,12 @@ export default function FormInput({ form }) {
       acceptedTerms: acceptedTerms,
     }
   ) => {
-    API.post(
-      "APIGateway",
-        `/expo/${expoId}/forms/${formId}/submissions`,
+    axios.post( 
+      `https://api.credity.nahnova.tech/expo/${expoId}/forms/${formId}/submissions`,
       {
-        body: {
-          formId,
-          expoId,
-          input,
-        },
+        formId,
+        expoId,
+        input,
       }
     );
   };
