@@ -2,21 +2,21 @@ openapi: 3.0.0
 
 info:
   version: "1.0.0"
-  title: Credity ExhibitMe Api
+  title: Credity ExhibitMe API
   description: This is the API for the Credity ExhibitMe project.
   contact:
     email: info@nahnova.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 
 tags:
   - name: expo
-    description: Expo related endpoints 
-  - name: inbox
-    description: Inbox data for the standholder 
+    description: Expo related operations
+  - name: form
+    description: Form related operations for an expo
   - name: submission
-    description: Submission that contains the data for the expo
+    description: Submissions that contain the form data for the expo
 
 paths:
   /expo:
@@ -31,15 +31,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Expo'
+              $ref: "#/components/schemas/Expo"
       responses:
-        '201':
+        "201":
           description: Expo created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Expo'
-        '405':
+                $ref: "#/components/schemas/Expo"
+        "405":
           description: Invalid input
     get:
       tags:
@@ -47,15 +47,15 @@ paths:
       description: Get all expos of this user
       operationId: getExpos
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Expo'
-        '400':
+                  $ref: "#/components/schemas/Expo"
+        "400":
           description: Invalid status value
   /expo/{expoId}:
     get:
@@ -72,43 +72,15 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Expo'
-        '400':
+                $ref: "#/components/schemas/Expo"
+        "400":
           description: Invalid ID supplied
-        '404':
-          description: Expo not found
-    put:
-      tags:
-        - expo
-      description: Update an existing expo
-      operationId: updateExpo
-      parameters:
-        - name: expoId
-          in: path
-          description: ID of expo to update
-          required: true
-          schema:
-            type: string 
-      requestBody:
-        description: Expo object that needs to be added to the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Expo'
-        required: true
-      responses:
-        '200':
-          description: Successful update
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Expo'
-        '404':
+        "404":
           description: Expo not found
     delete:
       tags:
@@ -123,51 +95,51 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Deletion successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Expo'
-        '400':
+                $ref: "#/components/schemas/Expo"
+        "400":
           description: Invalid ID supplied
-        '404':
+        "404":
           description: Expo not found
-  /expo/{expoId}/inbox/:
+  /expo/{expoId}/form/:
     post:
       tags:
-        - inbox
-      summary: Create a new inbox
-      operationId: createInbox
+        - form
+      summary: Create a new form
+      operationId: createForm
       parameters:
         - name: expoId
           in: path
-          description: ID of expo to add inbox to
+          description: ID of expo to add form to
           required: true
           schema:
             type: string
       requestBody:
-        description: Inbox object that needs to be added
+        description: Form object that needs to be added
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Inbox'
+              $ref: "#/components/schemas/Form"
       responses:
-        '201':
-          description: Inbox created
+        "201":
+          description: Form created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Inbox'
-        '405':
+                $ref: "#/components/schemas/Form"
+        "405":
           description: Invalid input
     get:
       tags:
-        - inbox
-      summary: Get all inboxes
-      description: ''
-      operationId: getInboxes
+        - form
+      summary: Get all Formes
+      description: ""
+      operationId: getFormes
       parameters:
         - name: expoId
           in: path
@@ -176,23 +148,23 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Inbox'
-        '400':
+                  $ref: "#/components/schemas/Form"
+        "400":
           description: Invalid status value
-  /expo/{expoId}/inbox/{inboxId}:
+  /expo/{expoId}/form/{FormId}:
     get:
       tags:
-        - inbox
-      summary: Find inbox by ID
-      description: Returns a single inbox
-      operationId: getInboxById
+        - form
+      summary: Find form by ID
+      description: Returns a single form
+      operationId: getFormById
       parameters:
         - name: expoId
           in: path
@@ -200,64 +172,29 @@ paths:
           required: true
           schema:
             type: string
-        - name: inboxId
+        - name: FormId
           in: path
-          description: ID of inbox to return
+          description: ID of form to return
           required: true
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Inbox'
-        '400':
+                $ref: "#/components/schemas/Form"
+        "400":
           description: Invalid ID supplied
-        '404':
-          description: Inbox not found
-    put:
-      tags:
-        - inbox
-      summary: Update an existing inbox
-      description: ''
-      operationId: updateInbox
-      parameters:
-        - name: expoId
-          in: path
-          description: ID of expo to delete
-          required: true
-          schema:
-            type: string
-        - name: inboxId
-          in: path
-          description: ID of inbox to return
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Inbox object that needs to be added to the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Inbox'
-        required: true
-      responses:
-        '200':
-          description: Successful update
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inbox'
-        '405':
-          description: Invalid input
+        "404":
+          description: Form not found
     delete:
       tags:
-        - inbox
-      summary: Deletes a inbox
-      description: ''
-      operationId: deleteInbox
+        - form
+      summary: Deletes a form
+      description: ""
+      operationId: deleteForm
       parameters:
         - name: expoId
           in: path
@@ -265,29 +202,29 @@ paths:
           required: true
           schema:
             type: string
-        - name: inboxId
+        - name: FormId
           in: path
-          description: Inbox id to delete
+          description: Form id to delete
           required: true
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful delete
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Inbox'
-        '400':
+                $ref: "#/components/schemas/Form"
+        "400":
           description: Invalid ID supplied
-        '404':
-          description: Inbox not found
-  /expo/{expoId}/inbox/{inboxId}/submission:
+        "404":
+          description: Form not found
+  /expo/{expoId}/forms/{formId}/submissions:
     post:
       tags:
         - submission
-      summary: Add a new submission to the inbox
-      description: ''
+      summary: Add a new submission to the form
+      description: ""
       operationId: addSubmission
       parameters:
         - name: expoId
@@ -296,9 +233,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: inboxId
+        - name: FormId
           in: path
-          description: ID of inbox to return
+          description: ID of form to return
           required: true
           schema:
             type: string
@@ -307,59 +244,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Submission'
+              $ref: "#/components/schemas/Submission"
         required: true
       responses:
-        '200':
+        "200":
           description: Successful update
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Submission'
-        '405':
+                $ref: "#/components/schemas/Submission"
+        "405":
           description: Invalid input
-    delete:
-      tags:
-        - submission
-      summary: Deletes a submission
-      description: ''
-      operationId: deleteSubmission
-      parameters:
-        - name: expoId
-          in: path
-          description: ID of expo to delete
-          required: true
-          schema:
-            type: string
-        - name: inboxId
-          in: path
-          description: ID of inbox to return
-          required: true
-          schema:
-            type: string
-        - name: submissionId
-          in: path
-          description: ID of submission to delete
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful delete
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Submission'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Submission not found
-  /expo/{expoId}/submissions:
     get:
       tags:
         - submission
       summary: Get all submissions
-      description: ''
+      description: ""
       operationId: getSubmissions
       parameters:
         - name: expoId
@@ -368,24 +268,23 @@ paths:
           required: true
           schema:
             type: string
-        - name: inbox
+        - name: form
           in: query
-          description: Inbox of submissions
+          description: Form of submissions
           required: false
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Submission'
-        '400':
+                  $ref: "#/components/schemas/Submission"
+        "400":
           description: Invalid status value
-  
 
 components:
   schemas:
@@ -400,70 +299,25 @@ components:
         title:
           type: string
           description: The name of the expo
-        description:
-          type: string
-          description: The description of the expo
-    Inbox:
+    Form:
       type: object
       description: A participant/form in the expo
       properties:
         id:
           type: string
           format: uuid
-          description: The auto-generated id of the inbox
-        type:
-          type: string
-          enum: [check-in, check-out, custom]
+          description: The auto-generated id of the form
         title:
           type: string
-          description: The name of the inbox
-        description:
-          type: string
-          description: The description of the inbox
-        additionalQuestions:
-          type: array
-          items:
-            $ref: '#/components/schemas/AdditionalQuestion'
-    AdditionalQuestion:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: The auto-generated id of the additional question
-        label:
-          type: string
-          description: The input label text
-        instructions:
-          type: string
-          description: additional instruction for this input
-        type:
-          type: string
-          enum: [rating, text, text-field, number, toggle]
+          description: The name of the form
     Submission:
       type: object
-      description: A submission to an inbox
+      description: A submission to an form
       properties:
         id:
           type: string
           format: uuid
           description: The auto-generated id of the submission
-        email:
+        input:
           type: string
-          format: email
-        additionalAnswers:
-          type: array
-          items:
-            $ref: '#/components/schemas/AdditionalAnswer'
-    AdditionalAnswer:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: The auto-generated id of the additional question
-        answer:
-          oneOf:
-            - type: string
-            - type: number
-            - type: boolean
+          format: json object of the form
